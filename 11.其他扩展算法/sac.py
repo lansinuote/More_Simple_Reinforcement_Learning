@@ -68,10 +68,8 @@ class SAC:
         dist = torch.distributions.Normal(mu, sigma)
 
         action = dist.rsample()
-        entropy = dist.log_prob(action) - (1 - action.tanh()**2 + 1e-8).log()
-        entropy = -entropy
 
-        return action, entropy
+        return action, sigma
 
     def requires_grad(self, model, value):
         for param in model.parameters():
