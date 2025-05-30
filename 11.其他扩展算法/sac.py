@@ -91,8 +91,6 @@ class SAC:
             input = torch.cat([next_state, next_action], dim=1)
             target = self.model_value_next(input)
 
-        #加权熵,熵越大越好
-        target = target + 5e-3 * entropy
         target = target * 0.99 * (1 - over) + reward
 
         #计算value
@@ -119,7 +117,7 @@ class SAC:
         value = self.model_value(torch.cat([state, action], dim=1))
 
         #加权熵,熵越大越好
-        loss = -(value + 5e-3 * entropy).mean()
+        loss = -(value + 1e-3 * entropy).mean()
 
         #使用model_value计算model_action的loss
         loss.backward()
