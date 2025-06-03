@@ -68,8 +68,9 @@ class SAC:
         dist = torch.distributions.Normal(mu, sigma)
 
         action = dist.rsample()
+        entropy = dist.entropy()
 
-        return action, sigma
+        return action, entropy
 
     def requires_grad(self, model, value):
         for param in model.parameters():
@@ -92,7 +93,7 @@ class SAC:
             target = self.model_value_next(input)
 
         #加权熵,熵越大越好
-        target = target + 5e-3 * entropy
+        target = target + 0.2 * entropy
         target = target * 0.99 * (1 - over) + reward
 
         #计算value
@@ -119,7 +120,7 @@ class SAC:
         value = self.model_value(torch.cat([state, action], dim=1))
 
         #加权熵,熵越大越好
-        loss = -(value + 5e-3 * entropy).mean()
+        loss = -(value + 0.2 * entropy).mean()
 
         #使用model_value计算model_action的loss
         loss.backward()
